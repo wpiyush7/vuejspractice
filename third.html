@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html class="h-full">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Assignments</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="h-full grid place-items-center">
+    <div id="app">
+        <section v-show="inProgreesAssignments.length > 0">
+            <h2 class="font-bold mb-2">In Progress Assignments</h2>
+            <ul>
+                <li v-for="assignment in inProgreesAssignments" :key="assignment.name">
+                    {{ assignment.name }}
+                    <input type="checkbox" v-model="assignment.complete" />
+                </li>
+            </ul>
+        </section>
+
+        <section class="mt-8" v-show="completedAssignments.length > 0">
+            <h2 class="font-bold mb-2">Completed Assignments</h2>
+            <ul>
+                <li v-for="assignment in completedAssignments" :key="assignment.name">
+                    {{ assignment.name }}
+                    <input type="checkbox" v-model="assignment.complete" />
+                </li>
+            </ul>
+        </section>
+
+    </div>
+    <script>
+        const app = {
+            data() {
+                return {
+                    assignments: [
+                        { name: "Finish Project", complete: false },
+                        { name: "Finish Chapter 4", complete: false },
+                        { name: "Turn in homework", complete: false }
+                    ]
+                };
+            },
+            computed: {
+                inProgreesAssignments() {
+                    return this.assignments.filter(assignment => !assignment.complete);
+                },
+                completedAssignments() {
+                    return this.assignments.filter(assignment => assignment.complete);
+                }
+            }
+        };
+
+        Vue.createApp(app).mount('#app');
+    </script>
+</body>
+
+</html>
