@@ -1,8 +1,10 @@
 import AssignmentList from "./AssignmentList.js";
+import AssignmentCreate from "./AssignmentCreate.js";
 
 export default {
     components: {
-        AssignmentList
+        AssignmentList,
+        AssignmentCreate,
     },
     template: `
     <section class="space-y-6">
@@ -16,22 +18,26 @@ export default {
             :assignments="filters.completed">
         </assignment-list>
 
-        <form>
-        <div class="border border-gray-200 text-block">
-            <input placeholder="New Assignment ..." type="text" class="text-block" />
-            <button type="submit" class="bg-gray p-2 border-l">Submit</button>
-            <div>
-        </form>
+       <assignment-create @add-assignment="add"></assignment-create>
         </section>
     `,
     data() {
         return {
+            newAssignment: '',
             assignments: [
-                { name: "Finish Project", complete: false },
-                { name: "Finish Chapter 4", complete: false },
-                { name: "Turn in homework", complete: false }
+                {id:1, name: "Finish Project", complete: false },
+                { id:2,name: "Finish Chapter 4", complete: false },
+                { id:3,name: "Turn in Homework", complete: false }
             ]
         };
+    },
+    methods: {
+        add(value) {
+
+            this.assignments.push(value);
+
+
+        },
     },
     computed: {
         // inProgressAssignments() {
@@ -42,8 +48,8 @@ export default {
         // }
         filters() {
             return {
-                progress : this.assignments.filter(assignment => !assignment.complete),
-                completed : this.assignments.filter(assignment => assignment.complete),
+                progress: this.assignments.filter(assignment => !assignment.complete),
+                completed: this.assignments.filter(assignment => assignment.complete),
             }
         }
     }
