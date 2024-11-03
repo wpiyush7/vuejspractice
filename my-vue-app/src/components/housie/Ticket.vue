@@ -17,7 +17,7 @@ function getRandomNumberForCol(high: number): number {
     }
     let low = high - 9;
 
-    return Math.floor(Math.random() * (high - low)) + low;
+    return Math.floor(Math.random() * (high - low + 1)) + low;
 
 }
 
@@ -80,24 +80,24 @@ while (occupancyLimit > 0) {
 
 console.log(game.map(row => row.join(' ')).join('\n'));
 
-const sortColumnsPreservingZeros = (game:number[][]) => { 
+const sortColumnsPreservingZeros = (game: number[][]) => {
     for (let j = 0; j < columnsLength; j++) {
-    const column = [];
-    for (let i = 0; i < rowsLength; i++) {
-        if (game[i][j] !== 0) {
-            column.push(game[i][j]);
+        const column = [];
+        for (let i = 0; i < rowsLength; i++) {
+            if (game[i][j] !== 0) {
+                column.push(game[i][j]);
+            }
+        }
+
+        const sortedColumn = column.sort((a, b) => a - b);
+
+        let sortedIndex = 0;
+        for (let i = 0; i < rowsLength; i++) {
+            if (game[i][j] !== 0) {
+                game[i][j] = sortedColumn[sortedIndex++];
+            }
         }
     }
-
-    const sortedColumn = column.sort((a, b) => a - b);
-
-    let sortedIndex = 0;
-    for (let i = 0; i < rowsLength; i++) {
-        if (game[i][j] !== 0) {
-            game[i][j] = sortedColumn[sortedIndex++];
-        }
-    }
-}
 
 }
 
