@@ -1,120 +1,94 @@
 <script setup lang="ts">
 
-let occupancyLimit = 15;
+const occupancyLimit = 15;
 const rowsLength = 3;
 const columnsLength = 9;
+
+// Initialize the game board with zeros
 const game: number[][] = Array.from({ length: rowsLength }, () => Array(columnsLength).fill(0));
 
-function getRandomNumber(max: number): number {
-    return Math.floor(Math.random() * max);
-}
+/**
+ * Generates a random number between 0 and max (exclusive).
+ */
+const getRandomNumber = (max: number): number => Math.floor(Math.random() * max);
 
-function getRandomNumberForCol(high: number): number {
-    if (high === 0) {
-        high = 10;
-    } else {
-        high = (high + 1) * 10;
-    }
-    let low = high - 9;
+/**
+ * Generates a random number within a specific range for a column.
+ * @param high - Column index to determine range (0-10, 11-20, etc.)
+ */
+const getRandomNumberForCol = (high: number): number => {
+    const upper = (high === 0 ? 10 : (high + 1) * 10);
+    const lower = upper - 9;
+    return Math.floor(Math.random() * (upper - lower + 1)) + lower;
+};
 
-    return Math.floor(Math.random() * (high - low + 1)) + low;
+/**
+ * Checks if a value exists in a specific column of the game board.
+ */
+const isValueExistsCol = (game: number[][], colIndex: number, value: number): boolean => {
+    return game.some(row => row[colIndex] === value);
+};
 
-}
+/**
+ * Validates cell constraints and returns a valid number for placement if possible.
+ */
+const validateAndReturnNum = (rowIndex: number, colIndex: number, game: number[][]): number | false => {
+    if (game[rowIndex][colIndex] !== 0) return false;
 
-function isValueExistsCol(game: number[][], i: number, j: number, data: number): boolean {
-    for (let k = 0; k < rowsLength; k++) {
-        if (game[k][j] === data) {
-            return true;
-        }
-    }
-    return false;
-}
+    // Check if the column already has two numbers
+    const columnCount = game.reduce((count, row) => count + (row[colIndex] !== 0 ? 1 : 0), 0);
+    if (columnCount >= 2) return false;
 
-function validateAndReturnNum(i: number, j: number, game: number[][]) {
-    if (game[i][j] !== 0) {
-        return false;
-    }
+    // Check if the row already has five numbers
+    const rowCount = game[rowIndex].filter(num => num !== 0).length;
+    if (rowCount >= 5) return false;
 
-    let rowCouter = 0;
-    for (let r = 0; r < rowsLength; r++) {
-        if (game[r][j] !== 0) {
-            rowCouter++;
-        }
-    }
-
-    if (rowCouter >= 2) {
-        return false;
-    }
-
-    let columnCounter = 0;
-    for (let c = 0; c < columnsLength; c++) {
-        if (game[i][c] !== 0) {
-            columnCounter++;
-        }
-    }
-
-    if (columnCounter >= 5) {
-        return false;
-    }
-
-    var data: number | boolean = false;
-    var isValueSet = false;
+    // Generate and validate a unique number for the column
+    let number: number;
     do {
-        data = getRandomNumberForCol(j);
-        isValueSet = isValueExistsCol(game, i, j, data);
-    } while (isValueSet);
-    return data;
-}
+        number = getRandomNumberForCol(colIndex);
+    } while (isValueExistsCol(game, colIndex, number));
 
+    return number;
+};
 
-while (occupancyLimit > 0) {
-    let i = getRandomNumber(3);
-    let j = getRandomNumber(9);
+// Fill the game board with random numbers
+let remainingSpots = occupancyLimit;
+while (remainingSpots > 0) {
+    const rowIndex = getRandomNumber(rowsLength);
+    const colIndex = getRandomNumber(columnsLength);
 
-    var data = validateAndReturnNum(i, j, game);
-    if (data && data > 0) {
-        game[i][j] = data;
-        occupancyLimit--;
+    const number = validateAndReturnNum(rowIndex, colIndex, game);
+    if (number) {
+        game[rowIndex][colIndex] = number;
+        remainingSpots--;
     }
 }
 
+// Function to sort columns while preserving zeros
+const sortColumnsPreservingZeros = (game: number[][]): void => {
+    for (let colIndex = 0; colIndex < columnsLength; colIndex++) {
+        // Extract non-zero values, sort them, and reassign while preserving zeros
+        const nonZeroValues = game.map(row => row[colIndex]).filter(value => value !== 0).sort((a, b) => a - b);
+        let sortedIndex = 0;
+
+        for (let rowIndex = 0; rowIndex < rowsLength; rowIndex++) {
+            if (game[rowIndex][colIndex] !== 0) {
+                game[rowIndex][colIndex] = nonZeroValues[sortedIndex++];
+            }
+        }
+    }
+};
+
+// Log the initial game board
+console.log("Initial game board:");
 console.log(game.map(row => row.join(' ')).join('\n'));
 
-const sortColumnsPreservingZeros = (game: number[][]) => {
-    for (let j = 0; j < columnsLength; j++) {
-        const column = [];
-        for (let i = 0; i < rowsLength; i++) {
-            if (game[i][j] !== 0) {
-                column.push(game[i][j]);
-            }
-        }
-
-        const sortedColumn = column.sort((a, b) => a - b);
-
-        let sortedIndex = 0;
-        for (let i = 0; i < rowsLength; i++) {
-            if (game[i][j] !== 0) {
-                game[i][j] = sortedColumn[sortedIndex++];
-            }
-        }
-    }
-
-}
-
-
+// Sort columns
 sortColumnsPreservingZeros(game);
 
-// Log the sorted array
+// Log the sorted game board
+console.log("\nSorted game board:");
 console.log(game.map(row => row.join(' ')).join('\n'));
-
-
-
-
-
-
-
-
-
-
 
 </script>

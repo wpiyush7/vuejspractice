@@ -7,16 +7,14 @@ import PageLayout from '../layouts/PageLayout.vue';
 
 <template>
     <PageLayout>
-        <div>
-            <Ticket/>
-        </div>
-        <!-- <div class="flex flex-wrap">
+        
+        <div class="flex flex-wrap">
             <div class="w-full md:w-1/3 p-4"> 
                 <NumberList />
             </div>
             <div class="w-full md:w-2/3 p-4"> 
                 <TicketList />
             </div>
-        </div> -->
+        </div>
     </PageLayout>
 </template>
