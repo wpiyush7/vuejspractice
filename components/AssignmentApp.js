@@ -24,11 +24,7 @@ export default {
     data() {
         return {
             newAssignment: '',
-            assignments: [
-                {id:1, name: "Finish Project", complete: false },
-                { id:2,name: "Finish Chapter 4", complete: false },
-                { id:3,name: "Turn in Homework", complete: false }
-            ]
+            assignments: []
         };
     },
     methods: {
@@ -38,6 +34,12 @@ export default {
 
 
         },
+    },
+    created() {
+        fetch('http://localhost:3001/assignments').then(response => response.json())
+            .then(data => {
+                this.assignments = data;
+            })
     },
     computed: {
         // inProgressAssignments() {
